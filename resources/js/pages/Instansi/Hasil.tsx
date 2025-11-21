@@ -1,43 +1,23 @@
 import InstansiLayout from '@/layouts/dashboardLayoutInstansi';
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { HiOutlineEye, HiSearch } from 'react-icons/hi';
 
+type ResultItem = {
+    id: number;
+    nama: string;
+    email: string;
+    devisi: string;
+    tgl: string;
+    karakter: string;
+};
+
+type PageProps = {
+    results: ResultItem[];
+};
+
 export default function HasilTes() {
-    // Data Dummy
-    const results = [
-        {
-            id: 1,
-            nama: 'Andi Saputra',
-            email: 'andi.s@gmail.com',
-            devisi: 'Marketing',
-            tgl: '12 Okt 2025',
-            karakter: 'Pemikir Extrovert',
-        },
-        {
-            id: 2,
-            nama: 'Rara Aisya',
-            email: 'rara.a@gmail.com',
-            devisi: 'Finance',
-            tgl: '10 Okt 2025',
-            karakter: 'Perasa Introvert',
-        },
-        {
-            id: 3,
-            nama: 'Budi Hartono',
-            email: 'budi.h@gmail.com',
-            devisi: 'SDM',
-            tgl: '10 Okt 2025',
-            karakter: 'Pengamat Extrovert',
-        },
-        {
-            id: 4,
-            nama: 'Citra Lestari',
-            email: 'citra.l@gmail.com',
-            devisi: 'Manager',
-            tgl: '9 Okt 2025',
-            karakter: 'Pemimpi Introvert',
-        },
-    ];
+    const { props } = usePage<PageProps>();
+    const results = props.results ?? [];
 
     return (
         <InstansiLayout>

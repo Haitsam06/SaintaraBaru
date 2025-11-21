@@ -10,24 +10,21 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Field yang boleh di–mass assign.
      */
     protected $fillable = [
         'name',
         'email',
         'password',
+        'role',         // role user: admin / personal / instansi
+        'instansi_id',  // relasi ke instansi
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Field yang disembunyikan saat serialization.
      */
     protected $hidden = [
         'password',
@@ -37,16 +34,23 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Cast otomatis.
      */
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'email_verified_at'       => 'datetime',
+            'password'                => 'hashed',
             'two_factor_confirmed_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Relasi: User dimiliki oleh Instansi.
+     * (hanya user instansi yang punya instansi_id)
+     */
+    public function instansi()
+    {
+        return $this->belongsTo(Instansi::class, 'instansi_id', 'id_instansi');
     }
 }

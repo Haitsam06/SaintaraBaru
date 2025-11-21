@@ -9,6 +9,11 @@ class RolesSeeder extends Seeder
 {
     public function run()
     {
+        $this->call([
+        TestPackageSeeder::class,
+        TraitKarakterSeeder::class,
+    
+    ]);
         DB::table('roles')->insert([
             [
                 'id' => 1,

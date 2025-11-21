@@ -1,184 +1,203 @@
 <?php
 
-
-use Inertia\Inertia;
-use Laravel\Fortify\Features;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
-Route::get('/', function () {
-    return inertia('landing');
-})->name('home');
+/*
+|--------------------------------------------------------------------------
+| Controllers
+|--------------------------------------------------------------------------
+*/
+use App\Http\Controllers\InstansiAuthController;
+use App\Http\Controllers\AuthenticatedSessionController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\HelpTicketController;
 
-Route::get('/test-web', function () {
-    return 'Web Loaded';
-});
+use App\Http\Controllers\InstansiDashboardController;
+use App\Http\Controllers\InstansiProfileController;
+use App\Http\Controllers\InstansiTesController;
 
+/*
+|--------------------------------------------------------------------------
+| Landing & Auth (ALL USERS)
+|--------------------------------------------------------------------------
+*/
 
-Route::get('/login', function () {
-    return Inertia::render('auth/login'); // Ubah 'Welcome' menjadi 'Home' (sesuai nama file Anda tanpa ekstensi)
-})->name('login');
+Route::get('/', fn () => Inertia::render('landing'))->name('home');
+Route::get('/test-web', fn () => 'Web Loaded');
 
-Route::get('/register', function () {
-    return Inertia::render('auth/register'); // Ubah 'Welcome' menjadi 'Home' (sesuai nama file Anda tanpa ekstensi)
-})->name('register');
+Route::get('/login', fn () => Inertia::render('auth/login'))->name('login');
+Route::get('/register', fn () => Inertia::render('auth/register'))->name('register');
 
-Route::get('/calendar', function () {
-    return Inertia::render('Calendar'); // Nama 'Calendar' harus sama persis dengan nama file Calendar.tsx
-});
+Route::get('/calendar', fn () => Inertia::render('Calendar'));
 
-// Group untuk Personal User
-Route::prefix('personal')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| PERSONAL ROUTES
+|--------------------------------------------------------------------------
+*/
+Route::prefix('personal')
+    ->middleware(['auth', 'role:personal'])
+    ->group(function () {
 
-    // Dashboard Personal
-    Route::get('/dashboardPersonal', function () {
-        return Inertia::render('Personal/dashboard-personal');
-    })->name('personal.dashboard');
+        Route::get('/dashboardPersonal', fn () => Inertia::render('Personal/dashboard-personal'))
+            ->name('personal.dashboard');
 
-    // Profil Personal
-    Route::get('/profilePersonal', function () {
-        return Inertia::render('Personal/Profile');
-    })->name('personal.profile');
+        Route::get('/profilePersonal', fn () => Inertia::render('Personal/Profile'))
+            ->name('personal.profile');
 
-    // Daftar Tes Karakter
-    Route::get('/daftarTesPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/daftar-tes');
-    })->name('personal.daftar-tes');
+        Route::get('/daftarTesPersonal', fn () => Inertia::render('Personal/daftar-tes'))
+            ->name('personal.daftar-tes');
 
-    // Transaksi dan Token
-    Route::get('/transaksiTokenPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/transaksi-token');
-    })->name('personal.transaksi-token');
+        Route::get('/transaksiTokenPersonal', fn () => Inertia::render('Personal/transaksi-token'))
+            ->name('personal.transaksi-token');
 
-    // Transaksi dan Token
-    Route::get('/hasilTesPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/results');
-    })->name('personal.results');
+        Route::get('/hasilTesPersonal', fn () => Inertia::render('Personal/results'))
+            ->name('personal.results');
 
-    // Hadiah dan Donasi
-    Route::get('/hadiahDonasiPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/hadiah-donasi');
-    })->name('personal.hadiah-donasi');
+        Route::get('/hadiahDonasiPersonal', fn () => Inertia::render('Personal/hadiah-donasi'))
+            ->name('personal.hadiah-donasi');
 
-    // Bantuan dan Layanan
-    Route::get('/bantuanPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/bantuan');
-    })->name('personal.bantuan');
+        Route::get('/bantuanPersonal', fn () => Inertia::render('Personal/bantuan'))
+            ->name('personal.bantuan');
 
-    // Settings
-    Route::get('/settingPersonal', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/setting');
-    })->name('personal.setting');
+        Route::get('/settingPersonal', fn () => Inertia::render('Personal/setting'))
+            ->name('personal.setting');
 
-    // Form Tes Karakter
-    Route::get('/formTes', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Profile.tsx
-        return Inertia::render('Personal/form-tes-personal');
-    })->name('personal.form-tes');
+        Route::get('/formTes', fn () => Inertia::render('Personal/form-tes-personal'))
+            ->name('personal.form-tes');
+    });
 
-});
+/*
+|--------------------------------------------------------------------------
+| ADMIN ROUTES 
+|--------------------------------------------------------------------------
+*/
+Route::prefix('admin')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
 
-// admin routes
-Route::prefix('admin')->group(function () {
+        Route::get('/dashboardAdmin', fn () => Inertia::render('Admin/dashboard-admin'))
+            ->name('admin.dashboard');
 
-    // Dashboard admin
-    Route::get('/dashboardAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Personal/Dashboard.tsx
-        return Inertia::render('Admin/dashboard-admin');
-    })->name('admin.dashboard');
+        Route::get('/profileAdmin', fn () => Inertia::render('Admin/Profile'))
+            ->name('admin.profile');
 
-    // Profil Personal
-    Route::get('/profileAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Profile.tsx
-        return Inertia::render('Admin/Profile');
-    })->name('admin.profile');
+        Route::get('/agendaAdmin', fn () => Inertia::render('Admin/Agenda'))
+            ->name('admin.agenda');
 
-    Route::get('/agendaAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Agenda.tsx
-        return Inertia::render('Admin/Agenda');
-    })->name('admin.agenda');
+        Route::get('/penggunaAdmin', fn () => Inertia::render('Admin/Pengguna'))
+            ->name('admin.pengguna');
 
-    Route::get('/penggunaAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Pengguna.tsx
-        return Inertia::render('Admin/Pengguna');
-    })->name('admin.pengguna');
+        Route::get('/keuanganAdmin', fn () => Inertia::render('Admin/Keuangan'))
+            ->name('admin.keuangan');
 
-    Route::get('/keuanganAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Keuangan.tsx
-        return Inertia::render('Admin/Keuangan');
-    })->name('admin.keuangan');
+        Route::get('/teamAdmin', fn () => Inertia::render('Admin/Tim'))
+            ->name('admin.team');
 
-    Route::get('/teamAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Tim.tsx
-        return Inertia::render('Admin/Tim');
-    })->name('admin.team');
+        Route::get('/supportAdmin', fn () => Inertia::render('Admin/Bantuan'))
+            ->name('admin.support');
 
-    Route::get('/supportAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Bantuan.tsx
-        return Inertia::render('Admin/Bantuan');
-    })->name('admin.support');
+        Route::get('/settingsAdmin', fn () => Inertia::render('Admin/Pengaturan'))
+            ->name('admin.settings');
+    });
 
-    Route::get('/settingsAdmin', function () {
-        // Pastikan file ada di: resources/js/Pages/Admin/Pengaturan.tsx
-        return Inertia::render('Admin/Pengaturan');
-    })->name('admin.settings');
+/*
+|--------------------------------------------------------------------------
+| INSTANSI ROUTES 
+|--------------------------------------------------------------------------
+*/
+Route::prefix('instansi')
+    ->middleware(['auth', 'role:instansi'])
+    ->group(function () {
 
-});
+        // Dashboard
+        Route::get('/dashboardInstansi', [InstansiDashboardController::class, 'index'])
+            ->name('instansi.dashboard');
 
+        // Profil
+        Route::get('/profilInstansi', [InstansiProfileController::class, 'edit'])
+            ->name('instansi.profil.edit');
 
-Route::prefix('instansi')->group(function () {
+        Route::post('/profilInstansi', [InstansiProfileController::class, 'update'])
+            ->name('instansi.profil.update');
 
-    // 1. Dashboard
-    Route::get('/dashboardInstansi', function () {
-        return Inertia::render('Instansi/dashboard');
-    })->name('instansi.dashboard');
+        // Daftar Tes Karakter
+        Route::get('/tesInstansi', [InstansiTesController::class, 'index'])
+            ->name('instansi.tes.index');
 
-    // 2. Profil Organisasi
-    Route::get('/profilInstansi', function () {
-        return Inertia::render('Instansi/Profile');
-    })->name('instansi.profil');
+        Route::post('/tesInstansi/upload-excel', [InstansiTesController::class, 'uploadExcel'])
+            ->name('instansi.tes.upload');
 
-    // 3. Daftar Tes Karakter
-    Route::get('/tesInstansi', function () {
-        return Inertia::render('Instansi/DaftarTes');
-    })->name('instansi.daftar_tes');
+        // Hasil Tes — SEKARANG menggunakan controller
+        Route::get('/hasilInstansi', [InstansiTesController::class, 'hasil'])
+            ->name('instansi.hasil');
 
-    // 4. Transaksi & Voucher
-    Route::get('/transaksiInstansi', function () {
-        return Inertia::render('Instansi/Transaksi');
-    })->name('instansi.transaksi');
+        // Halaman lain
+        Route::get('/transaksiInstansi', fn () => Inertia::render('Instansi/Transaksi'))
+            ->name('instansi.transaksi');
 
-    // 5. Hasil Tes
-    Route::get('/hasilInstansi', function () {
-        return Inertia::render('Instansi/Hasil');
-    })->name('instansi.hasil');
+        Route::get('/bantuanInstansi', fn () => Inertia::render('Instansi/Bantuan'))
+            ->name('instansi.bantuan');
 
-    // 6. Bantuan
-    Route::get('/bantuanInstansi', function () {
-        return Inertia::render('Instansi/Bantuan');
-    })->name('instansi.bantuan');
+        Route::get('/artikelInstansi', fn () => Inertia::render('Instansi/Artikel'))
+            ->name('instansi.artikel');
 
-    // 7. Artikel Update
-    Route::get('/artikelInstansi', function () {
-        return Inertia::render('Instansi/Artikel');
-    })->name('instansi.artikel');
+        Route::get('/pengaturanInstansi', fn () => Inertia::render('Instansi/Pengaturan'))
+            ->name('instansi.pengaturan');
 
-    // 8. Pengaturan
-    Route::get('/pengaturanInstansi', function () {
-        return Inertia::render('Instansi/Pengaturan');
-    })->name('instansi.pengaturan');
+        Route::get('/formTesInstansi', fn () => Inertia::render('Instansi/form-tes-instansi'))
+            ->name('instansi.form-tes-instansi');
+    });
 
-    Route::get('/formTesInstansi', function () {
-        return Inertia::render('Instansi/form-tes-instansi');
-    })->name('instansi.form-tes-instansi');
+/*
+|--------------------------------------------------------------------------
+| REGISTER INSTANSI
+|--------------------------------------------------------------------------
+*/
 
+Route::get('/instansi/register', [InstansiAuthController::class, 'create'])
+    ->middleware('guest')
+    ->name('instansi.register');
+
+Route::post('/instansi/register', [InstansiAuthController::class, 'store'])
+    ->middleware('guest')
+    ->name('instansi.register.store');
+
+/*
+|--------------------------------------------------------------------------
+| LOGIN / LOGOUT
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/login', [AuthenticatedSessionController::class, 'store'])
+    ->name('login.store');
+
+Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Artikel
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/artikel', [ArticleController::class, 'index'])
+    ->name('artikel.index');
+
+Route::get('/artikel/{slug}', [ArticleController::class, 'show'])
+    ->name('artikel.show');
+
+/*
+|--------------------------------------------------------------------------
+| HelpTicket
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth')->group(function () {
+    Route::post('/instansi/bantuan', [HelpTicketController::class, 'store'])
+        ->name('instansi.bantuan.store');
 });
 
 require __DIR__ . '/settings.php';

@@ -11,6 +11,7 @@ const Logo = () => (
 export default function Register() {
     // Form state disesuaikan dengan field di gambar
     const { data, setData, post, processing, errors, reset } = useForm({
+        tipe_akun: 'personal',      // udah bisa drop down
         namaLengkap: '',
         namaPanggilan: '',
         email: '',
@@ -28,15 +29,20 @@ export default function Register() {
         };
     }, []);
 
-    // Handler untuk semua input
+    // Handler untuk semua input text
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData(e.target.id as keyof typeof data, e.target.value);
     };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        // Mengirim data ke route 'register' (standar Breeze)
-        post('register');
+
+        const url =
+            data.tipe_akun === 'instansi'
+                ? '/instansi/register' // disini untuk instansi.register.store
+                : '/register';         // ini yang lama
+
+        post(url);
     };
 
     return (
@@ -53,6 +59,22 @@ export default function Register() {
                 </div>
 
                 <form onSubmit={submit} className="space-y-4">
+                    {/* Dropdown tipe akun */}
+                    <div>
+                        <label className="mb-1 block text-sm font-medium text-gray-700">
+                            Daftar Sebagai
+                        </label>
+                        <select
+                            id="tipe_akun"
+                            value={data.tipe_akun}
+                            onChange={(e) => setData('tipe_akun', e.target.value)}
+                            className="w-full rounded-lg border-gray-300 px-4 py-2 text-black shadow-sm focus:border-saintara-yellow focus:ring-saintara-yellow"
+                        >
+                            <option value="personal">Personal</option>
+                            <option value="instansi">Instansi / Perusahaan</option>
+                        </select>
+                    </div>
+
                     {/* Nama Lengkap */}
                     <div>
                         <label htmlFor="namaLengkap" className="mb-1 block text-sm font-medium text-gray-700">
@@ -171,7 +193,9 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
-                        {errors.password_confirmation && <p className="mt-1 text-xs text-red-500">{errors.password_confirmation}</p>}
+                        {errors.password_confirmation && (
+                            <p className="mt-1 text-xs text-red-500">{errors.password_confirmation}</p>
+                        )}
                     </div>
 
                     {/* Tombol Submit */}
@@ -196,8 +220,8 @@ export default function Register() {
                         dan{' '}
                         <Link href="#" className="font-bold text-gray-700 hover:underline">
                             Kebijakan Privasi
-                        </Link>
-                        {' '}yang berlaku.
+                        </Link>{' '}
+                        yang berlaku.
                     </p>
                     <p className="text-sm text-gray-600">
                         Sudah punya akun?{' '}

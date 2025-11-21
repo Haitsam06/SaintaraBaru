@@ -24,7 +24,7 @@ export default function Login({ status, canResetPassword }: { status?: string; c
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        post('login');
+        post('/login');
     };
 
     return (
