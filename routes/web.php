@@ -127,7 +127,7 @@ Route::prefix('admin')->group(function () {
 Route::prefix('instansi')->group(function () {
 
     Route::get('/dashboardInstansi', function () {
-        return Inertia::render('Instansi/Dashboard');
+        return Inertia::render('Instansi/dashboard');
     })->name('instansi.dashboard');
 
     Route::get('/profilInstansi', function () {
