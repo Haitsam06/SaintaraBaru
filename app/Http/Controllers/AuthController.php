@@ -68,7 +68,7 @@ class AuthController extends Controller
         return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
     }
 
-    // --- LOGIN (SESSION) ---
+    // Login untuk multiple user types
     public function login(Request $request)
     {
         $credentials = $request->validate([
