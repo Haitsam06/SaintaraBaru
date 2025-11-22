@@ -23,9 +23,11 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
 
+        // alias 'role'
         $middleware->alias([
-            'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+            'auth'       => \Illuminate\Auth\Middleware\Authenticate::class,
             'auth.admin' => \App\Http\Middleware\AuthAdmin::class,
+            'role'       => \App\Http\Middleware\RoleMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
