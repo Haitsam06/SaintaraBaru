@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
 
             // Kolom FK ke tabel instansis (id_instansi = PK)
-            $table->unsignedBigInteger('instansi_id');
+            $table->string('instansi_id');
 
             // Data hasil tes
             $table->string('nama');

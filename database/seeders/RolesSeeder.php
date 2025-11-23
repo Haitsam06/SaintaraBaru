@@ -34,5 +34,9 @@ class RolesSeeder extends Seeder
                 'updated_at' => now(),
             ],
         ]);
+        $this->call([
+        CustomersSeeder::class
+    
+    ]);
     }
 }

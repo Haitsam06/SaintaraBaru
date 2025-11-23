@@ -1,13 +1,35 @@
 import React, { useState } from "react";
 import DashboardLayout from "@/layouts/dashboard-layout-personal";
-import { Head } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import { route } from "ziggy-js";
 
 export default function Bantuan() {
     const [faqOpen, setFaqOpen] = useState<number | null>(0);
-
+    const { flash } = usePage().props;
     const toggleFAQ = (index: number) => {
         setFaqOpen(faqOpen === index ? null : index);
     };
+
+    const { data, setData, post, processing, errors } = useForm({
+            subject: "",
+            category:"",
+            description: ""
+        });
+    
+        const submit = (e: React.FormEvent) => {
+            e.preventDefault();
+            post("/personal/bantuanPersonal", {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setData({
+                        subject: "",
+                        category: "",
+                        description: ""
+                    });
+                }
+            });
+        };
+
 
     const faqItems = [
         {
@@ -27,6 +49,11 @@ export default function Bantuan() {
     return (
         <DashboardLayout>
             <Head title="Bantuan & Layanan" />
+            {flash?.success && (
+                <div className="mb-4 rounded-lg bg-green-100 p-4 text-sm text-green-700 shadow-md" role="alert">
+                    {flash.success}
+                </div>
+            )}
 
             <div className="p-6">
                 {/* Page title */}
@@ -43,10 +70,12 @@ export default function Bantuan() {
                         Mengalami masalah saat menggunakan platform? Isi formulir di bawah ini dan tim kami akan segera membantu Anda.
                     </p>
 
-                    <form className="space-y-4">
+                    <form onSubmit={submit} className="space-y-4">
                         <div>
                             <label className="block font-medium mb-1">Subjek Kendala</label>
                             <input
+                                onChange={(e) => setData("subject", e.target.value)}
+                                value={data.subject}
                                 type="text"
                                 placeholder="Contoh: Tidak bisa mendownload hasil tes"
                                 className="w-full border border-gray-300 rounded-lg p-3"
@@ -55,7 +84,7 @@ export default function Bantuan() {
 
                         <div>
                             <label className="block font-medium mb-1">Kategori Kendala</label>
-                            <select className="w-full border border-gray-300 rounded-lg p-3">
+                            <select className="w-full border border-gray-300 rounded-lg p-3" value={data.category} onChange={(e) => setData("category", e.target.value)}>
                                 <option>Pilih Kategori</option>
                                 <option>Masalah teknis</option>
                                 <option>Kesalahan pembayaran</option>
@@ -66,6 +95,8 @@ export default function Bantuan() {
                         <div>
                             <label className="block font-medium mb-1">Jelaskan Kendala Anda</label>
                             <textarea
+                                value={data.description}
+                                onChange={(e) => setData("description", e.target.value)}
                                 rows={4}
                                 className="w-full border border-gray-300 rounded-lg p-3"
                                 placeholder="Tuliskan detail kendala yang Anda alami"
@@ -74,6 +105,7 @@ export default function Bantuan() {
 
                         <button
                             type="submit"
+                            disabled={processing}
                             className="bg-black text-white px-6 py-3 rounded-lg hover:bg-gray-800"
                         >
                             Kirim Laporan

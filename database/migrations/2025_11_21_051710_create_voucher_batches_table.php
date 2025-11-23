@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
 
             // FK ke instansis (pk = id_instansi)
-            $table->unsignedBigInteger('instansi_id');
+            $table->string('instansi_id');
             $table->string('kode');
             $table->date('tanggal');
             $table->integer('jumlah');

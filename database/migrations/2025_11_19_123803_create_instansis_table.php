@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         // HAPUS 's' DISINI. Dari 'instansis' menjadi 'instansi'
-        Schema::create('instansi', function (Blueprint $table) {
+        Schema::create('instansis', function (Blueprint $table) {
 
             $table->string('id_instansi')->primary(); // ID Custom
 

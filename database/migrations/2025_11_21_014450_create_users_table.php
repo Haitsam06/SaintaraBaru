@@ -15,14 +15,12 @@ return new class extends Migration {
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
-// rolenya
             $table->string('role')->default('user');
-            $table->unsignedBigInteger('instansi_id')->nullable();
-
+            $table->string('instansi_id')->nullable();
             $table->foreign('instansi_id')
-                ->references('id_instansi')
-                ->on('instansis')
-                ->onDelete('cascade');
+            ->references('id_instansi')
+            ->on('instansis')
+            ->onDelete('set null');
         });
     }
 
